@@ -5,8 +5,8 @@ import (
 	"regexp"
 )
 
-// ExplainDetailedAddress 将书籍地址解释为书籍详细地址(小说首页)
-func ExplainDetailedAddress(url string) string {
+// ExplainBookDetailedAddress 将书籍地址解释为书籍详细地址(小说首页)
+func ExplainBookDetailedAddress(url string) string {
 
 	// 检查是不是起点地址
 	if checkLinkIsQiDian, _ := regexp.MatchString(`qidian.com`, url); checkLinkIsQiDian {

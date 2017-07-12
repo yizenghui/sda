@@ -42,7 +42,7 @@ func GetUpdateBookByListURL(url string) ([]data.Book, error) {
 //FindBookBaseByBookURL 通过书籍URL信息获取书籍的基本信息
 func FindBookBaseByBookURL(url string) (data.Book, error) {
 	// 检查修正URL
-	url = code.ExplainDetailedAddress(url)
+	url = code.ExplainBookDetailedAddress(url)
 	// 该url能够匹配到内容
 	if url != "" {
 		// 起点列表
