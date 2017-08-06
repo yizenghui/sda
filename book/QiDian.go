@@ -56,7 +56,10 @@ func (q *QiDian) GetUpdate() ([]data.Book, error) {
 	// 下列内容于 2017年4月4日 20:50:24 抓取
 	g.Find(".rank-table-list tbody tr").Each(func(i int, content *goquery.Selection) {
 		// 书详细页
-		book.BookURL, _ = content.Find(".name").Attr("href")
+		url, _ := content.Find(".name").Attr("href")
+
+		book.BookURL = fmt.Sprintf("http:%v", url)
+
 		book.ChapterURL, _ = content.Find(".chapter").Attr("href")
 		// 书名
 		book.Name = strings.TrimSpace(content.Find(".name").Text())
