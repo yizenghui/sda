@@ -15,6 +15,28 @@ type ZongHeng struct {
 	BookInfoURL   string
 }
 
+// ZongHengFansLevelMate 纵横小说网粉丝级别映射
+var ZongHengFansLevelMate = map[string]int16{
+	"http://static.zongheng.com/v2012/images/star_16.gif": 5,
+
+	"http://static.zongheng.com/v2012/images/star_13.gif": 4,
+	"http://static.zongheng.com/v2012/images/star_12.gif": 4,
+	"http://static.zongheng.com/v2012/images/star_11.gif": 4,
+
+	"http://static.zongheng.com/v2012/images/star_10.gif": 3,
+	"http://static.zongheng.com/v2012/images/star_9.gif":  3,
+	"http://static.zongheng.com/v2012/images/star_8.gif":  3,
+	"http://static.zongheng.com/v2012/images/star_7.gif":  3,
+	"http://static.zongheng.com/v2012/images/star_6.gif":  3,
+	"http://static.zongheng.com/v2012/images/star_5.gif":  3,
+
+	"http://static.zongheng.com/v2012/images/star_4.gif": 2,
+	"http://static.zongheng.com/v2012/images/star_3.gif": 2,
+	"http://static.zongheng.com/v2012/images/star_2.gif": 2,
+
+	"http://static.zongheng.com/v2012/images/star_1.gif": 1,
+}
+
 //GetUpdate 纵横
 func (z *ZongHeng) GetUpdate() ([]data.Book, error) {
 
@@ -113,4 +135,31 @@ func (z *ZongHeng) GetInfo() (data.Book, error) {
 		book.IsVIP = false
 	}
 	return book, nil
+}
+
+// GetFans 获取前100粉丝级别
+func (z *ZongHeng) GetFans() ([]data.Fans, error) {
+	// id
+	url := "http://book.zongheng.com/donate/309318.html"
+
+	var rows []data.Fans
+	var fans data.Fans
+	g, e := goquery.NewDocument(url)
+	if e != nil {
+		return rows, e
+	}
+	g.Find(".tabcontainer li").Each(func(i int, content *goquery.Selection) {
+		// 书名
+		fans.Name = strings.TrimSpace(content.Find("a").Eq(0).Text())
+
+		fans.URL, _ = content.Find("a").Eq(0).Attr("href")
+
+		fansLevelImg, _ := content.Find("img").Eq(0).Attr("src")
+
+		if l, ok := ZongHengFansLevelMate[fansLevelImg]; ok {
+			fans.Level = l
+		}
+		rows = append(rows, fans)
+	})
+	return rows, nil
 }
