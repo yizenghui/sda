@@ -31,3 +31,12 @@ func Test_GetSeventeenKInfo(t *testing.T) {
 	book, _ = sk.GetInfo()
 	fmt.Println(book)
 }
+
+func Test_GetSeventeenKFans(t *testing.T) {
+	var url string
+	url = "http://www.17k.com/book/voteRank.action?bookId=1238814&type=hb"
+	z := SeventeenK{FansRankURL: url}
+	fans, _ := z.GetFans()
+	fmt.Println(len(fans))
+	fmt.Println(fans)
+}

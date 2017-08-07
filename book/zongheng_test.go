@@ -35,8 +35,8 @@ func Test_GetZongHengInfo(t *testing.T) {
 
 func Test_GetZongHengFans(t *testing.T) {
 	var url string
-	url = "http://book.zongheng.com/book/490607.html"
-	z := ZongHeng{BookInfoURL: url}
+	url = "http://book.zongheng.com/donate/490607.html"
+	z := ZongHeng{FansRankURL: url}
 	fans, _ := z.GetFans()
-	fmt.Println(fans)
+	fmt.Println(len(fans))
 }

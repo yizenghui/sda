@@ -1,7 +1,9 @@
 package book
 
 import (
+	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -13,6 +15,7 @@ import (
 type SeventeenK struct {
 	UpdateListURL string
 	BookInfoURL   string
+	FansRankURL   string
 }
 
 //GetUpdate 17K
@@ -119,4 +122,46 @@ func (s *SeventeenK) GetInfo() (data.Book, error) {
 		book.IsVIP = false
 	}
 	return book, nil
+}
+
+// GetFans 获取书籍红包信息
+func (s *SeventeenK) GetFans() ([]data.Fans, error) {
+	// id
+	var rows []data.Fans
+	var fans data.Fans
+	g, e := goquery.NewDocument(s.FansRankURL)
+	if e != nil {
+		return rows, e
+	}
+	g.Find(".PiaoyouTop li").Each(func(i int, content *goquery.Selection) {
+		// 粉丝名
+		fans.Name = strings.TrimSpace(content.Find("a").Eq(0).Text())
+
+		fans.URL, _ = content.Find("a").Eq(0).Attr("href")
+
+		money := content.Find(".more").Eq(0).Text()
+
+		i64, err := strconv.ParseInt(money, 10, 16)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		i16 := int16(i64)
+
+		switch {
+		case i16 >= 10000:
+			fans.Level = 5
+		case i16 >= 1000:
+			fans.Level = 4
+		case i16 >= 100:
+			fans.Level = 3
+		case i16 >= 10:
+			fans.Level = 2
+		default:
+			fans.Level = 1
+		}
+
+		rows = append(rows, fans)
+	})
+	return rows, nil
 }

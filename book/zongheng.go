@@ -13,6 +13,7 @@ import (
 type ZongHeng struct {
 	UpdateListURL string
 	BookInfoURL   string
+	FansRankURL   string
 }
 
 // ZongHengFansLevelMate 纵横小说网粉丝级别映射
@@ -140,11 +141,9 @@ func (z *ZongHeng) GetInfo() (data.Book, error) {
 // GetFans 获取前100粉丝级别
 func (z *ZongHeng) GetFans() ([]data.Fans, error) {
 	// id
-	url := "http://book.zongheng.com/donate/309318.html"
-
 	var rows []data.Fans
 	var fans data.Fans
-	g, e := goquery.NewDocument(url)
+	g, e := goquery.NewDocument(z.FansRankURL)
 	if e != nil {
 		return rows, e
 	}
