@@ -1,7 +1,6 @@
 package book
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -143,7 +142,7 @@ func (s *SeventeenK) GetFans() ([]data.Fans, error) {
 
 		i64, err := strconv.ParseInt(money, 10, 16)
 		if err != nil {
-			fmt.Println(err)
+			// fmt.Println(err)
 		}
 
 		i16 := int16(i64)

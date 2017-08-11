@@ -14,6 +14,22 @@ import (
 type QiDian struct {
 	UpdateListURL string
 	BookInfoURL   string
+	FansRankURL   string
+}
+
+// QiDianFansLevelMate 起点小说网粉丝级别映射
+var QiDianFansLevelMate = map[string]int16{
+	"盟主": 4,
+	"宗师": 3,
+	"掌门": 3,
+	"长老": 3,
+	"护法": 3,
+	"堂主": 3,
+	"舵主": 3,
+	"执事": 2,
+	"弟子": 2,
+	"学徒": 1,
+	"无":  1,
 }
 
 // NewQiDian 起点资源
@@ -118,4 +134,29 @@ func (q *QiDian) GetInfo() (data.Book, error) {
 		book.IsVIP = false
 	}
 	return book, nil
+}
+
+// GetFans 获取前100粉丝级别
+func (q *QiDian) GetFans() ([]data.Fans, error) {
+	// id
+	var rows []data.Fans
+	var fans data.Fans
+	g, e := goquery.NewDocument(q.FansRankURL)
+	if e != nil {
+		return rows, e
+	}
+	g.Find(".fans-list li").Each(func(i int, content *goquery.Selection) {
+		// 书名
+		fans.Name = strings.TrimSpace(content.Find("a").Eq(0).Text())
+
+		fans.URL, _ = content.Find("a").Eq(0).Attr("href")
+
+		fansTitle := strings.TrimSpace(content.Find(".name").Eq(0).Text())
+
+		if l, ok := QiDianFansLevelMate[fansTitle]; ok {
+			fans.Level = l
+		}
+		rows = append(rows, fans)
+	})
+	return rows, nil
 }

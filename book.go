@@ -1,6 +1,7 @@
 package sda
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/yizenghui/sda/book"
@@ -72,4 +73,41 @@ func FindBookBaseByBookURL(url string) (data.Book, error) {
 	}
 	var book data.Book
 	return book, nil
+}
+
+//FindBookFansByBookURL 通过书籍URL信息获取书籍的基本信息
+func FindBookFansByBookURL(url string) ([]data.Fans, error) {
+	// 检查修正URL
+	url = code.ExplainBookDetailedAddress(url)
+	// 该url能够匹配到内容
+	if url != "" {
+		// 起点列表
+		checkLinkIsQiDian, _ := regexp.MatchString(`book.qidian.com\/info\/(?P<book_id>\d+)`, url)
+		if checkLinkIsQiDian {
+			Map := code.SelectString(`book.qidian.com\/info\/(?P<book_id>\d+)`, url)
+			qidian := book.QiDian{FansRankURL: fmt.Sprintf("http://book.qidian.com/fansrank/%v", Map["book_id"])}
+			return qidian.GetFans()
+		}
+
+		// 纵横男生网
+		checkLinkIsZongHeng, _ := regexp.MatchString(`book.zongheng.com\/book\/(?P<book_id>\d+).html`, url)
+		if checkLinkIsZongHeng {
+			// fmt.Println("checkLinkIsZongHeng", checkLinkIsZongHeng)
+			Map := code.SelectString(`book.zongheng.com\/book\/(?P<book_id>\d+).html`, url)
+			zongheng := book.ZongHeng{FansRankURL: fmt.Sprintf("http://book.zongheng.com/donate/%v.html", Map["book_id"])}
+			return zongheng.GetFans()
+		}
+
+		//17K
+		checkLinkIsSeventeenK, _ := regexp.MatchString(`www.17k.com\/book\/(?P<book_id>\d+).html`, url)
+		if checkLinkIsSeventeenK {
+			// fmt.Println("checkLinkIsSeventeenK", checkLinkIsSeventeenK)
+			Map := code.SelectString(`www.17k.com\/book\/(?P<book_id>\d+).html`, url)
+			sk := book.SeventeenK{FansRankURL: fmt.Sprintf("http://www.17k.com/book/voteRank.action?bookId=%v&type=hb", Map["book_id"])}
+			return sk.GetFans()
+		}
+
+	}
+	var fans []data.Fans
+	return fans, nil
 }

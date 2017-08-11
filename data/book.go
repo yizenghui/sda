@@ -19,3 +19,12 @@ type Fans struct {
 	URL   string
 	Level int16 // 1个，2十，3千，4万
 }
+
+// Chapter 章节信息
+type Chapter struct {
+	Name  string
+	URL   string
+	IsVIP bool
+	Total int32
+	PubAt string
+}

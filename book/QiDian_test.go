@@ -28,3 +28,12 @@ func Test_GetQiDianInfo(t *testing.T) {
 	book, _ = q.GetInfo()
 	fmt.Println(book)
 }
+
+func Test_GetQiDianFans(t *testing.T) {
+	var url string
+	url = "http://book.qidian.com/fansrank/1004608738"
+	q := QiDian{FansRankURL: url}
+	fans, _ := q.GetFans()
+	fmt.Println(len(fans))
+	fmt.Println(fans)
+}

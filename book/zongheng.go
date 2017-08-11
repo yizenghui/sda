@@ -1,7 +1,9 @@
 package book
 
 import (
+	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -159,6 +161,40 @@ func (z *ZongHeng) GetFans() ([]data.Fans, error) {
 			fans.Level = l
 		}
 		rows = append(rows, fans)
+	})
+	return rows, nil
+}
+
+// GetChapter 获取前100粉丝级别
+func (z *ZongHeng) GetChapter() ([]data.Chapter, error) {
+	// id
+	var rows []data.Chapter
+	var chapter data.Chapter
+	g, e := goquery.NewDocument("http://book.zongheng.com/showchapter/547156.html")
+	if e != nil {
+		return rows, e
+	}
+	g.Find(".chapterBean").Each(func(i int, content *goquery.Selection) {
+		// 书名
+		chapter.Name = strings.TrimSpace(content.Find("a").Eq(0).Text())
+
+		chapter.URL, _ = content.Find("a").Eq(0).Attr("href")
+
+		vip, _ := content.Find("em").Eq(0).Attr("class")
+		if vip == "vip" {
+			chapter.IsVIP = true
+		}
+		fmt.Println(content.Html())
+		total, _ := content.Attr("wordNum")
+		i64, _ := strconv.ParseInt(total, 10, 32)
+
+		chapter.Total = int32(i64)
+
+		chapter.PubAt, _ = content.Attr("updateTime")
+
+		// chapter.Total, _ = content.Find("a").Eq(0).Attr("wordNum")
+
+		rows = append(rows, chapter)
 	})
 	return rows, nil
 }
