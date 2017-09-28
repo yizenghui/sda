@@ -165,7 +165,7 @@ func (z *ZongHeng) GetFans() ([]data.Fans, error) {
 	return rows, nil
 }
 
-// GetChapter 获取前100粉丝级别
+// GetChapter 章节
 func (z *ZongHeng) GetChapter() ([]data.Chapter, error) {
 	// id
 	var rows []data.Chapter
