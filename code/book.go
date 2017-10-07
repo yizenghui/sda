@@ -61,6 +61,19 @@ func ExplainBookDetailedAddress(url string) string {
 			return fmt.Sprintf("http://book.zongheng.com/book/%v.html", Map["book_id"])
 		}
 
+		// http://book.zongheng.com/chapter/672340/38144043.html
+		ChapterInfo := `book.zongheng.com\/chapter\/(?P<book_id>\d+)\/(?P<chapter_id>\d+).html`
+		if b, _ := regexp.MatchString(ChapterInfo, url); b {
+			Map := SelectString(ChapterInfo, url)
+			return fmt.Sprintf("http://book.zongheng.com/book/%v.html", Map["book_id"])
+		}
+
+		// http://book.zongheng.com/showchapter/672340.html
+		BookChapterMenu := `book.zongheng.com\/showchapter\/(?P<book_id>\d+).html`
+		if b, _ := regexp.MatchString(BookChapterMenu, url); b {
+			Map := SelectString(BookChapterMenu, url)
+			return fmt.Sprintf("http://book.zongheng.com/book/%v.html", Map["book_id"])
+		}
 		// 纵横手机详细页
 		// http://m.zongheng.com/h5/book?bookid=490607
 		MobileBook := `m.zongheng.com\/h5\/book\?bookid=(?P<book_id>\d+)`

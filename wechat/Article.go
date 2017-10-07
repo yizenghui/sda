@@ -1,10 +1,11 @@
 package wechat
 
 import (
+	"errors"
 	"strings"
 
-	"github.com/GanEasy/sdax/code"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/yizenghui/sda/code"
 )
 
 //Article struct
@@ -41,13 +42,20 @@ func Find(url string) (article Article, err error) {
 	article.Cover = strings.TrimSpace(code.FindString(`var msg_cdn_url = "(?P<cover>[^"]+)";`, html, "cover"))
 
 	//
-	article.PubAt = strings.TrimSpace(code.FindString(`var publish_time = "(?P<date>[^"]+)"`, html, "date"))
+	// article.PubAt = strings.TrimSpace(code.FindString(`var publish_time = "(?P<date>[^"]+)"`, html, "date"))
+
+	article.PubAt = strings.TrimSpace(code.FindString(`var ct = "(?P<date>\d+)";`, html, "date"))
 
 	link := strings.TrimSpace(code.FindString(`var msg_link = "(?P<url>[^"]+)";`, html, "url"))
 
 	article.URL = strings.Replace(link, `\x26amp;`, "&", -1)
 
 	article.Author = strings.TrimSpace(code.FindString(`<em class="rich_media_meta rich_media_meta_text">(?P<author>[^<]+)</em>`, html, "author"))
+
+	// fmt.Println(article)
+	if article.AppName == "" {
+		return article, errors.New("无法获取文章信息")
+	}
 
 	return article, nil
 }
