@@ -10,14 +10,16 @@ import (
 
 //Article struct
 type Article struct {
-	Title   string
-	Author  string
-	AppName string
-	AppID   string
-	Cover   string
-	Intro   string
-	PubAt   string
-	URL     string
+	Title     string
+	Author    string
+	AppName   string
+	AppID     string
+	Cover     string
+	Intro     string
+	PubAt     string
+	URL       string
+	RoundHead string
+	OriHead   string
 }
 
 // Find ..
@@ -41,6 +43,9 @@ func Find(url string) (article Article, err error) {
 
 	article.Cover = strings.TrimSpace(code.FindString(`var msg_cdn_url = "(?P<cover>[^"]+)";`, html, "cover"))
 
+	article.RoundHead = strings.TrimSpace(code.FindString(`var round_head_img = "(?P<round_head>[^"]+)";`, html, "round_head"))
+
+	article.OriHead = strings.TrimSpace(code.FindString(`var ori_head_img_url = "(?P<ori_head>[^"]+)";`, html, "ori_head"))
 	//
 	// article.PubAt = strings.TrimSpace(code.FindString(`var publish_time = "(?P<date>[^"]+)"`, html, "date"))
 
