@@ -20,6 +20,10 @@ type Article struct {
 	URL       string
 	RoundHead string
 	OriHead   string
+	SourceURL string
+	Ban       bool
+	Limit     bool
+	Recommend bool
 }
 
 // Find ..
@@ -55,7 +59,21 @@ func Find(url string) (article Article, err error) {
 
 	article.URL = strings.Replace(link, `\x26amp;`, "&", -1)
 
+	link2 := strings.TrimSpace(code.FindString(`var msg_source_url = '(?P<url>[^']+)';`, html, "url"))
+
+	article.SourceURL = strings.Replace(link2, `\x26amp;`, "&", -1)
+
 	article.Author = strings.TrimSpace(code.FindString(`<em class="rich_media_meta rich_media_meta_text">(?P<author>[^<]+)</em>`, html, "author"))
+
+	if strings.Contains(article.SourceURL, string("readfollow.com")) {
+		article.Recommend = true
+	}
+	if strings.Contains(html, string("ban.readfollow.com")) {
+		article.Ban = true
+	}
+	if strings.Contains(html, string("limit.readfollow.com")) {
+		article.Limit = true
+	}
 
 	// fmt.Println(article)
 	if article.AppName == "" {
