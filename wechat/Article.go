@@ -5,25 +5,28 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/sundy-li/html2article"
 	"github.com/yizenghui/sda/code"
 )
 
 //Article struct
 type Article struct {
-	Title     string
-	Author    string
-	AppName   string
-	AppID     string
-	Cover     string
-	Intro     string
-	PubAt     string
-	URL       string
-	RoundHead string
-	OriHead   string
-	SourceURL string
-	Ban       bool
-	Limit     bool
-	Recommend bool
+	Title       string
+	Author      string
+	AppName     string
+	AppID       string
+	Cover       string
+	Intro       string
+	Content     string
+	ReadContent string
+	PubAt       string
+	URL         string
+	RoundHead   string
+	OriHead     string
+	SourceURL   string
+	Ban         bool
+	Limit       bool
+	Recommend   bool
 }
 
 // Find ..
@@ -35,6 +38,22 @@ func Find(url string) (article Article, err error) {
 	}
 
 	html, _ := g.Html()
+
+	ext, err := html2article.NewFromHtml(html)
+	if err != nil {
+		return article, err
+	}
+	art, err := ext.ToArticle()
+	if err != nil {
+		return article, err
+	}
+	// fmt.Println(article)
+
+	//parse the article to be readability
+	art.Readable(url)
+
+	article.Content = art.Content
+	article.ReadContent = art.ReadContent
 
 	article.AppID = strings.TrimSpace(code.FindString(`var user_name = "(?P<user_name>[^"]+)";`, html, "user_name"))
 
