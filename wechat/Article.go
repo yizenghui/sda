@@ -99,5 +99,19 @@ func Find(url string) (article Article, err error) {
 		return article, errors.New("无法获取文章信息")
 	}
 
+	// 处理特殊字符
+	article.URL = strings.Replace(article.URL, `http://`, `https://`, -1)
+	article.URL = strings.Replace(article.URL, `#rd`, "&scene=27#wechat_redirect", 1)
+
+	article.Title = strings.Replace(article.Title, `\x26quot;`, `"`, -1)
+	article.Title = strings.Replace(article.Title, `\x26amp;`, `&`, -1)
+	article.Title = strings.Replace(article.Title, `\x26gt;`, `>`, -1)
+	article.Title = strings.Replace(article.Title, `\x0a`, "\n", -1)
+
+	article.Intro = strings.Replace(article.Intro, `\x0a`, "\n", -1)
+	article.Intro = strings.Replace(article.Intro, `\x26quot;`, `"`, -1)
+	article.Intro = strings.Replace(article.Intro, `\x26gt;`, `>`, -1)
+	article.Intro = strings.Replace(article.Intro, `\x26amp;`, `&`, -1)
+
 	return article, nil
 }
