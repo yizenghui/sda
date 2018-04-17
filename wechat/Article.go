@@ -106,11 +106,13 @@ func Find(url string) (article Article, err error) {
 	article.Title = strings.Replace(article.Title, `\x26quot;`, `"`, -1)
 	article.Title = strings.Replace(article.Title, `\x26amp;`, `&`, -1)
 	article.Title = strings.Replace(article.Title, `\x26gt;`, `>`, -1)
+	article.Title = strings.Replace(article.Title, `\x26lt;`, `<`, -1)
 	article.Title = strings.Replace(article.Title, `\x0a`, "\n", -1)
 
 	article.Intro = strings.Replace(article.Intro, `\x0a`, "\n", -1)
 	article.Intro = strings.Replace(article.Intro, `\x26quot;`, `"`, -1)
 	article.Intro = strings.Replace(article.Intro, `\x26gt;`, `>`, -1)
+	article.Intro = strings.Replace(article.Intro, `\x26lt;`, `<`, -1)
 	article.Intro = strings.Replace(article.Intro, `\x26amp;`, `&`, -1)
 
 	return article, nil
