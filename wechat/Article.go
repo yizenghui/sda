@@ -2,6 +2,7 @@ package wechat
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -24,9 +25,12 @@ type Article struct {
 	RoundHead   string
 	OriHead     string
 	SourceURL   string
+	Copyright   string
 	Ban         bool
 	Limit       bool
 	Recommend   bool
+	Video       string
+	Audio       string
 }
 
 // Find ..
@@ -48,6 +52,22 @@ func Find(url string) (article Article, err error) {
 		return article, err
 	}
 	// fmt.Println(article)
+
+	// 视频地址
+	article.Video, _ = g.Find("iframe").Eq(0).Attr("data-src")
+
+	if article.Video == `` {
+		article.Video, _ = g.Find("video").Eq(0).Attr("src")
+	}
+
+	// 音频地址
+	audio, _ := g.Find("mpvoice").Eq(0).Attr("voice_encode_fileid")
+
+	if audio != `` {
+		article.Audio = fmt.Sprintf("https://res.wx.qq.com/voice/getvoice?mediaid=%v", audio)
+	} else {
+		article.Audio, _ = g.Find("audio").Eq(0).Attr("src")
+	}
 
 	//parse the article to be readability
 	art.Readable(url)
@@ -74,6 +94,9 @@ func Find(url string) (article Article, err error) {
 
 	article.PubAt = strings.TrimSpace(code.FindString(`var ct = "(?P<date>\d+)";`, html, "date"))
 
+	article.Copyright = strings.TrimSpace(code.FindString(`var _copyright_stat = "(?P<copyright>\d+)";`, html, "copyright"))
+	// var _copyright_stat = "2";
+
 	link := strings.TrimSpace(code.FindString(`var msg_link = "(?P<url>[^"]+)";`, html, "url"))
 
 	article.URL = strings.Replace(link, `\x26amp;`, "&", -1)
@@ -83,6 +106,8 @@ func Find(url string) (article Article, err error) {
 	article.SourceURL = strings.Replace(link2, `\x26amp;`, "&", -1)
 
 	article.Author = strings.TrimSpace(code.FindString(`<em class="rich_media_meta rich_media_meta_text">(?P<author>[^<]+)</em>`, html, "author"))
+
+	// data-src="https://v.qq.com/iframe/preview.html?vid=p0689redfaq&amp;width=500&amp;height=375&amp;auto=0"></iframe>
 
 	if strings.Contains(article.SourceURL, string("readfollow.com")) {
 		article.Recommend = true

@@ -16,7 +16,24 @@ func Test_GetQiDianUpdate(t *testing.T) {
 	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
 
 	a, _ := Find(url)
-	t.Fatal(a)
+	t.Fatal(a.Video)
+}
+
+func Test_GetGetVideo(t *testing.T) {
+
+	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
+	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
+
+	a, _ := Find(url)
+	t.Fatal(a.Video)
+}
+func Test_GetGetAudio(t *testing.T) {
+
+	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
+	url := "https://mp.weixin.qq.com/s?__biz=MjM5MDMyMzg2MA==&mid=2655522346&idx=1&sn=ef39b32b4811ef20181e530e42cf73b1&chksm=bdfa2bd18a8da2c72236146f4cc9ab603b35d5f9f9375e78567e33c9a7126359d8f7703b1c90"
+
+	a, _ := Find(url)
+	t.Fatal(a.Audio)
 }
 
 //
