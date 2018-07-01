@@ -16,7 +16,7 @@ func Test_GetQiDianUpdate(t *testing.T) {
 	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
 
 	a, _ := Find(url)
-	t.Fatal(a.Video)
+	t.Fatal(a.ReadContent)
 }
 
 func Test_GetGetVideo(t *testing.T) {

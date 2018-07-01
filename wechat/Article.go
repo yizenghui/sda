@@ -74,6 +74,7 @@ func Find(url string) (article Article, err error) {
 
 	article.Content = art.Content
 	article.ReadContent = art.ReadContent
+	// article.ReadContent, _ = g.Find("#js_content").Html()
 
 	article.AppID = strings.TrimSpace(code.FindString(`var user_name = "(?P<user_name>[^"]+)";`, html, "user_name"))
 
