@@ -25,6 +25,8 @@ type Article struct {
 	RoundHead   string
 	OriHead     string
 	SourceURL   string
+	WxID        string
+	WxIntro     string
 	Copyright   string
 	Ban         bool
 	Limit       bool
@@ -84,6 +86,10 @@ func Find(url string) (article Article, err error) {
 
 	//
 	article.Intro = strings.TrimSpace(code.FindString(`var msg_desc = "(?P<intro>[^"]+)";`, html, "intro"))
+
+	article.WxID = strings.TrimSpace(code.FindString(`<label class="profile_meta_label">微信号</label>(?P<intro>[\s]+)<span class="profile_meta_value">(?P<wxid>[^"]+)</span>`, html, "wxid"))
+
+	article.WxIntro = strings.TrimSpace(code.FindString(`<label class="profile_meta_label">功能介绍</label>(?P<intro>[\s]+)<span class="profile_meta_value">(?P<wxintro>[^"]+)</span>`, html, "wxintro"))
 
 	article.Cover = strings.TrimSpace(code.FindString(`var msg_cdn_url = "(?P<cover>[^"]+)";`, html, "cover"))
 
