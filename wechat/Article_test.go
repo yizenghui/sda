@@ -16,6 +16,15 @@ func Test_GetQiDianUpdate(t *testing.T) {
 	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
 
 	a, _ := Find(url)
+	t.Fatal(a.ReadContent)
+}
+
+func Test_GetWxIntro(t *testing.T) {
+
+	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
+	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
+
+	a, _ := Find(url)
 	t.Fatal(a.WxIntro)
 }
 
