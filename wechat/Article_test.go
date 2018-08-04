@@ -5,8 +5,10 @@
 package wechat
 
 import (
+	"regexp"
 	"testing"
 
+	"github.com/lunny/html2md"
 	"github.com/yizenghui/sda/code"
 )
 
@@ -15,8 +17,36 @@ func Test_GetQiDianUpdate(t *testing.T) {
 	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
 	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
 
-	a, _ := Find(url)
+	a, e := Find(url)
+	if e != nil {
+		t.Fatal(e)
+	}
+
 	t.Fatal(a.ReadContent)
+	// t.Fatal(html2md.Convert(a.ReadContent))
+	t.Fatal(MarkDownFormatContent(a.ReadContent))
+}
+
+func Test_GetToMd(t *testing.T) {
+
+	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
+	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
+
+	a, e := Find(url)
+	if e != nil {
+		t.Fatal(e)
+	}
+	html2md.AddConvert(func(content string) string {
+		// Pre code blocks
+		re := regexp.MustCompile(`<span\b[^>]*>([\s\S]*)</span>`)
+		content = re.ReplaceAllStringFunc(content, func(innerHTML string) string {
+			matches := re.FindStringSubmatch(innerHTML)
+			return matches[1]
+		})
+		return content
+	})
+	t.Fatal(html2md.Convert(a.ReadContent))
+	// t.Fatal(MarkDownFormatContent(a.ReadContent))
 }
 
 func Test_GetWxIntro(t *testing.T) {

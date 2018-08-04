@@ -3,9 +3,12 @@ package wechat
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/lunny/html2md"
+	"github.com/russross/blackfriday"
 	"github.com/sundy-li/html2article"
 	"github.com/yizenghui/sda/code"
 )
@@ -45,7 +48,23 @@ func Find(url string) (article Article, err error) {
 
 	html, _ := g.Html()
 
-	ext, err := html2article.NewFromHtml(html)
+	contentHTML, err := g.Find("#js_content").Html()
+	if err != nil {
+		return article, err
+	}
+	html2 := fmt.Sprintf(`
+		<html>
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>%v</title>
+		<body><div class="rich_media_content " id="js_content">
+		%v
+		</div>
+		</body>
+		</html>
+		`, `NONE TITLE`, contentHTML)
+	// panic(html2)
+	ext, err := html2article.NewFromHtml(html2)
 	if err != nil {
 		return article, err
 	}
@@ -75,8 +94,8 @@ func Find(url string) (article Article, err error) {
 	art.Readable(url)
 
 	article.Content = art.Content
-	// article.ReadContent = art.ReadContent
-	article.ReadContent, _ = g.Find("#js_content").Html()
+	article.ReadContent = art.ReadContent
+	// article.ReadContent, _ = g.Find("#js_content").Html()
 
 	article.AppID = strings.TrimSpace(code.FindString(`var user_name = "(?P<user_name>[^"]+)";`, html, "user_name"))
 
@@ -150,4 +169,23 @@ func Find(url string) (article Article, err error) {
 	article.Intro = strings.Replace(article.Intro, `\x26#39;`, `'`, -1)
 
 	return article, nil
+}
+
+//MarkDownFormatContent 通过markdown语法格式化内容
+func MarkDownFormatContent(content string) string {
+	html2md.AddConvert(func(content string) string {
+		// Pre code blocks
+		re := regexp.MustCompile(`<span\b[^>]*>([\s\S]*)</span>`)
+		content = re.ReplaceAllStringFunc(content, func(innerHTML string) string {
+			matches := re.FindStringSubmatch(innerHTML)
+			return matches[1]
+		})
+		return content
+	})
+	md := html2md.Convert(content)
+	input := []byte(md)
+	unsafe := blackfriday.MarkdownCommon(input)
+	return string(unsafe[:])
+	// contentBytes := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+	// return strings.TrimSpace(fmt.Sprintf(`%v`, string(contentBytes[:])))
 }
