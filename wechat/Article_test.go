@@ -14,17 +14,17 @@ import (
 
 func Test_GetQiDianUpdate(t *testing.T) {
 
-	// url := "https://mp.weixin.qq.com/s/tKQufLU2i7iJuM7v49jmRQ"
-	url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
+	url := "https://mp.weixin.qq.com/s?__biz=MjM5ODMzMDMyMw==&amp;mid=2653199450&amp;idx=1&amp;sn=048148680fa9fc32c383586aa67ced80&amp;chksm=bd1c56e68a6bdff0bac85b60356c43bb3766ab82be26bf8299384ce7ad5bdd248b13a569c189&scene=27#wechat_redirect"
+	// url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
 
 	a, e := Find(url)
 	if e != nil {
 		t.Fatal(e)
 	}
 
-	t.Fatal(a.ReadContent)
+	t.Fatal(a.MdContent)
 	// t.Fatal(html2md.Convert(a.ReadContent))
-	t.Fatal(MarkDownFormatContent(a.ReadContent))
+	// t.Fatal(MarkDownFormatContent(a.ReadContent))
 }
 
 func Test_GetToMd(t *testing.T) {

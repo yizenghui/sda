@@ -3,14 +3,12 @@ package wechat
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/lunny/html2md"
-	"github.com/russross/blackfriday"
 	"github.com/sundy-li/html2article"
 	"github.com/yizenghui/sda/code"
+	"github.com/yizenghui/wxarticle2md"
 )
 
 //Article struct
@@ -23,6 +21,7 @@ type Article struct {
 	Intro       string
 	Content     string
 	ReadContent string
+	MdContent   string
 	PubAt       string
 	URL         string
 	RoundHead   string
@@ -96,6 +95,8 @@ func Find(url string) (article Article, err error) {
 	article.Content = art.Content
 	article.ReadContent = art.ReadContent
 	// article.ReadContent, _ = g.Find("#js_content").Html()
+	ah, _ := wxarticle2md.ToAticle(html2)
+	article.MdContent = wxarticle2md.Convert(ah)
 
 	article.AppID = strings.TrimSpace(code.FindString(`var user_name = "(?P<user_name>[^"]+)";`, html, "user_name"))
 
@@ -169,23 +170,4 @@ func Find(url string) (article Article, err error) {
 	article.Intro = strings.Replace(article.Intro, `\x26#39;`, `'`, -1)
 
 	return article, nil
-}
-
-//MarkDownFormatContent 通过markdown语法格式化内容
-func MarkDownFormatContent(content string) string {
-	html2md.AddConvert(func(content string) string {
-		// Pre code blocks
-		re := regexp.MustCompile(`<span\b[^>]*>([\s\S]*)</span>`)
-		content = re.ReplaceAllStringFunc(content, func(innerHTML string) string {
-			matches := re.FindStringSubmatch(innerHTML)
-			return matches[1]
-		})
-		return content
-	})
-	md := html2md.Convert(content)
-	input := []byte(md)
-	unsafe := blackfriday.MarkdownCommon(input)
-	return string(unsafe[:])
-	// contentBytes := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
-	// return strings.TrimSpace(fmt.Sprintf(`%v`, string(contentBytes[:])))
 }
