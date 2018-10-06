@@ -35,6 +35,7 @@ type Article struct {
 	Recommend   bool
 	Video       string
 	Audio       string
+	Images      []string
 }
 
 // Find ..
@@ -61,7 +62,7 @@ func Find(url string) (article Article, err error) {
 		</div>
 		</body>
 		</html>
-		`, `NONE TITLE`, contentHTML)
+		`, ` `, contentHTML)
 	// panic(html2)
 	ext, err := html2article.NewFromHtml(html2)
 	if err != nil {
@@ -94,6 +95,7 @@ func Find(url string) (article Article, err error) {
 
 	article.Content = art.Content
 	article.ReadContent = art.ReadContent
+	article.Images = art.Images
 	// article.ReadContent, _ = g.Find("#js_content").Html()
 	ah, _ := wxarticle2md.ToAticle(html2)
 	article.MdContent = wxarticle2md.Convert(ah)
