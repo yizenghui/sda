@@ -134,7 +134,9 @@ func Find(url string) (article Article, err error) {
 
 	article.SourceURL = strings.Replace(link2, `\x26amp;`, "&", -1)
 
-	article.Author = strings.TrimSpace(code.FindString(`<em class="rich_media_meta rich_media_meta_text">(?P<author>[^<]+)</em>`, html, "author"))
+	//
+
+	article.Author = strings.TrimSpace(code.FindString(`<span class="rich_media_meta rich_media_meta_text">(?P<author>[^<]+)</span>`, html, "author"))
 
 	// data-src="https://v.qq.com/iframe/preview.html?vid=p0689redfaq&amp;width=500&amp;height=375&amp;auto=0"></iframe>
 
@@ -154,7 +156,8 @@ func Find(url string) (article Article, err error) {
 	}
 
 	// 处理特殊字符
-	article.URL = strings.Replace(article.URL, `http://`, `https://`, -1)
+	article.URL = strings.Replace(article.URL, `http://`, `https://`, 1)
+	article.URL = strings.Replace(article.URL, `&amp;`, `&`, -1)
 	article.URL = strings.Replace(article.URL, `#rd`, "&scene=27#wechat_redirect", 1)
 
 	article.Title = strings.Replace(article.Title, `\x26quot;`, `"`, -1)

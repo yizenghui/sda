@@ -16,6 +16,7 @@ func Test_GetQiDianUpdate(t *testing.T) {
 
 	url := "https://mp.weixin.qq.com/s?__biz=MjM5ODMzMDMyMw==&amp;mid=2653199450&amp;idx=1&amp;sn=048148680fa9fc32c383586aa67ced80&amp;chksm=bd1c56e68a6bdff0bac85b60356c43bb3766ab82be26bf8299384ce7ad5bdd248b13a569c189&scene=27#wechat_redirect"
 	// url := "https://mp.weixin.qq.com/s/NiZ5iszTKEo2dxYo8mbRZg"
+	url = "https://mp.weixin.qq.com/s?__biz=MjM5NzI1MTY0MQ==&mid=2654634766&idx=1&sn=daed6230baf4d76aa56667a036cc4af4&chksm=bd12fc588a65754e0556601ad465f3bdf4f80186575c3c004b765761cc7222c4bf435757bd4c&scene=27#wechat_redirect"
 
 	a, e := Find(url)
 	if e != nil {
